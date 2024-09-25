@@ -31,8 +31,16 @@
    For complete license details please visit:
    http://creativecommons.org/licenses/by-nc-sa/4.0/
 */
+
+#define ESP32_BT
+
 #ifdef ESP32
+#ifdef ESP32_BT
 // Required for ESP32 only
+#include "BluetoothSerial.h"
+BluetoothSerial SerialBT;
+#endif
+#define Serial SerialBT
 #else
 #define WITH_WATCH_DOG
 #endif
@@ -49,6 +57,7 @@
 #include <FastLED.h>
 #endif
 
+#define BT_TRACK_NAME "RC Lap Counter"
 
 const byte term = 0x3B;  // ;
 
@@ -221,7 +230,11 @@ boolean rgbLedInit = false;
 */
 void setup()
 {
+#ifdef ESP32_BT
+  Serial.begin(BT_TRACK_NAME);  
+#else
   Serial.begin(iBaudRate);
+#endif
 
   // If the Leonardo or Micro is used,
   // wait for the serial monitor to open.
@@ -236,7 +249,7 @@ void setup()
   SERIAL_PRINTLN(A5);
 
   // First send the version number
-  Serial.write(rcVersion, sizeof(rcVersion));
+  sendVersion();
 
 #ifdef WITH_FAST_LED
   // Mark all the rgb leds as unused
@@ -359,6 +372,7 @@ void loop()
   }
   bReset = false;
 
+  serialEvent();
   // If there is some data from RC to process do it here
   if (bRead)
   {
@@ -434,6 +448,11 @@ void handleDebounce(int pinIndex, unsigned long ulCurTimeMs, unsigned long ulDel
       pDebounceTime[pinIndex] = 0xffffffff;
     }
   }
+}
+
+void sendVersion()
+{
+    Serial.write(rcVersion, sizeof(rcVersion));
 }
 
 void sendStateChange(int pinIndex, int pinState, unsigned long ulCurTimeMs) {
@@ -1102,7 +1121,11 @@ void softwareReboot()
 #else
   SERIAL_PRINTLN("Doing software reboot");
 #ifdef ESP32
+#ifdef ESP32_BT
+  sendVersion();
+#else
   ESP.restart();
+#endif
 #else
   asm volatile("jmp 0");
 #endif
