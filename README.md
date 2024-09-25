@@ -8,5 +8,5 @@ If you add *#define ESP32_BT* at the start of the sketch then the board will use
 
 ### Caveats
 - Select the Mega board in Race Coordinator since that allows configuration of all pins.
-- Do **not** configure pins 6,7,8,9,10 and 11 in the RC configuration screen, ensure they are set to UNUSED. On ESP32 these pins are reserved for flash memory use and will crash the board
+- Do **not** configure pins 6,7,8,9,10 and 11 in the RC configuration screen, ensure they are set to *RESERVED*. On ESP32 these pins are reserved for flash memory use and will crash the board
 - Bluetooth classic is only available on some ESP32 implementation i.e. DevKit and will **not** work on S3 board.
