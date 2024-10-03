@@ -32,15 +32,16 @@
    http://creativecommons.org/licenses/by-nc-sa/4.0/
 */
 
+// Use Bluetooth for a standard ESP32 (not s2 or c3 etc) needs to support Bluetooth 4
 #define ESP32_BT
 
+// Required for ESP32 only (defined by compiler when selecting board in IDE)
 #ifdef ESP32
 #ifdef ESP32_BT
-// Required for ESP32 only
 #include "BluetoothSerial.h"
 BluetoothSerial SerialBT;
-#endif
 #define Serial SerialBT
+#endif
 #else
 #define WITH_WATCH_DOG
 #endif
